@@ -1,6 +1,6 @@
 [![CircleCI](https://circleci.com/gh/puncsky/typescript-starter.svg?style=svg)](https://circleci.com/gh/puncsky/typescript-starter)
 
-# typescript-starter
+# Pipeline: publishing posts to social networks and chatbots
 
 A simplistic typescript boilerplate using babel, tslint, ava, and CircleCI.
 

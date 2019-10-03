@@ -2,6 +2,11 @@
 
 # Pipeline: publishing posts to social networks and chatbots
 
+Purposes:
+
+- User Acquisition
+- SEO
+
 A simplistic typescript boilerplate using babel, tslint, ava, and CircleCI.
 
 ```bash
@@ -14,6 +19,10 @@ npm run test
 # run a single test file
 npm run ava ./path/to/test-file.js
 ```
+
+### Twitter
+
+https://developer.twitter.com/en/application
 
 To run a single test case, follow instructions [here](https://github.com/avajs/ava/blob/master/docs/01-writing-tests.md#running-specific-tests).
 

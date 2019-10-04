@@ -28,7 +28,7 @@ export class Mailgun implements ISender {
     );
   }
 
-  public async send(sendArgs: SendArgs): Promise<string> {
+  public async send(sendArgs: SendArgs): Promise<boolean> {
     for (const email of this.opts.subscriberEmails) {
       await this.transporter.sendMail({
         from: this.opts.from,
@@ -37,6 +37,6 @@ export class Mailgun implements ISender {
         html: sendArgs.content
       });
     }
-    return "";
+    return true;
   }
 }

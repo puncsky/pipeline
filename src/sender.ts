@@ -11,5 +11,5 @@ export interface SendArgs {
 
 export interface ISender {
   // returns the item URL
-  send(sendArgs: SendArgs): Promise<string>;
+  send(sendArgs: SendArgs): Promise<string | boolean>;
 }

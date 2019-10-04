@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 import test from "ava";
+import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
 
 test.skip("tweet", async t => {
@@ -17,4 +18,17 @@ test.skip("tweet", async t => {
     content: "comments"
   });
   t.truthy(url.startsWith("https://twitter.com/guigu_io/status/"));
+});
+
+test.skip("telegram channel", async t => {
+  const telegram = new TelegramClient({
+    botToken: String(process.env.TELEGRAM_BOT_TOKEN),
+    channelId: String(process.env.TELEGRAM_CHANNEL_ID)
+  });
+  const url = await telegram.send({
+    title: "title",
+    url: "https://iotex.io",
+    content: "[hello world](https://google.com)"
+  });
+  t.truthy(url.startsWith("https://t.me/"));
 });

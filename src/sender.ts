@@ -4,9 +4,9 @@ export interface SendArgs {
   url?: string;
   forwardedFor?: string;
   imageUrls?: Array<string>;
+  short?: string;
 
   content: string;
-  short?: string;
 }
 
 export interface ISender {

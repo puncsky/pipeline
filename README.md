@@ -22,11 +22,27 @@ npm run ava ./path/to/test-file.js
 
 ### Twitter
 
-https://developer.twitter.com/en/application
+Get your credentials from [Twitter Developer](https://developer.twitter.com/en/application).
 
-To run a single test case, follow instructions [here](https://github.com/avajs/ava/blob/master/docs/01-writing-tests.md#running-specific-tests).
+```text
+consumerKey TODO,
+consumerSecret: TODO,
+accessTokenKey: TODO,
+accessTokenSecret: TODO
+```
+
+### Telegram
+
+Get your bot token from [BotFather](https://telegram.me/botfather).
+
+```text
+botToken: TODO,
+channelId: TODO
+```
 
 ## Scripts
+
+To run a single test case, follow instructions [here](https://github.com/avajs/ava/blob/master/docs/01-writing-tests.md#running-specific-tests).
 
 - `npm run build`: build source code from `src` to `dist`
 - `npm publish`: publish code to npm

@@ -96,6 +96,8 @@
   "dependencies": {
     "@types/twitter": "^1.7.0",
     "dotenv": "^8.1.0",
+    "nodemailer": "^6.3.0",
+    "nodemailer-mailgun-transport": "^1.4.0",
     "telegraf": "^3.32.0",
     "twitter": "^1.7.1"
   }

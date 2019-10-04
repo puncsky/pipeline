@@ -69,7 +69,9 @@
     "@babel/preset-typescript": "7.6.0",
     "@babel/register": "7.6.2",
     "@types/dotenv": "^6.1.1",
-    "@types/node": "11.13.22",
+    "@types/node": "^11.13.22",
+    "@types/open": "^6.2.1",
+    "@types/qs": "^6.5.3",
     "ava": "1.4.1",
     "babel-loader": "8.0.6",
     "babel-plugin-module-resolver": "3.2.0",
@@ -96,6 +98,8 @@
   "dependencies": {
     "@types/twitter": "^1.7.0",
     "dotenv": "^8.1.0",
+    "open": "^6.4.0",
+    "qs": "^6.9.0",
     "telegraf": "^3.32.0",
     "twitter": "^1.7.1"
   }

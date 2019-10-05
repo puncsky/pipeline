@@ -68,7 +68,7 @@
     "@babel/preset-react": "7.0.0",
     "@babel/preset-typescript": "7.6.0",
     "@babel/register": "7.6.2",
-    "@types/dotenv": "^6.1.1",
+    "@types/dotenv": "6.1.1",
     "@types/node": "11.13.22",
     "ava": "1.4.1",
     "babel-loader": "8.0.6",
@@ -94,11 +94,11 @@
   },
   "private": true,
   "dependencies": {
-    "@types/twitter": "^1.7.0",
-    "dotenv": "^8.1.0",
-    "nodemailer": "^6.3.0",
-    "nodemailer-mailgun-transport": "^1.4.0",
-    "telegraf": "^3.32.0",
-    "twitter": "^1.7.1"
+    "@types/twitter": "1.7.0",
+    "dotenv": "8.1.0",
+    "nodemailer": "6.3.0",
+    "nodemailer-mailgun-transport": "1.4.0",
+    "telegraf": "3.32.0",
+    "twitter": "1.7.1"
   }
 }

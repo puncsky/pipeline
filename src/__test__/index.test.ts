@@ -43,3 +43,16 @@ test.skip("sendgrid campaign channel", async t => {
     await sendgrid.createListIfNotExists();
   });
 });
+
+test.skip("sendgrid add to list", async t => {
+  const sendgrid = new SendgridClient({
+    sendgridApiKey: String(process.env.SENDGRID_API_KEY),
+    listName: String(process.env.SENDGRID_LIST_NAME)
+  });
+  await sendgrid.addToList({
+    email: "test@iotex.io",
+    lastName: "iotex_test"
+  });
+
+  t.truthy(sendgrid.listId);
+});

@@ -9,13 +9,15 @@ type Opts = {
 
 type Recipient = {
   email: string;
-  firstName?: string;
   lastName?: string;
+  pet?: string;
+  age?: number;
 };
 
 export class SendgridClient implements ISender {
   client: Client;
   opts: Opts;
+  listId: number;
 
   constructor(opts: Opts) {
     this.client = new Client();
@@ -31,32 +33,65 @@ export class SendgridClient implements ISender {
         url: `/v3/contactdb/lists`
       };
       const [, body] = await this.client.request(request);
-      const lists = body.lists;
-      if (lists.find((l: { name: string }) => l.name === this.opts.listName)) {
-        return;
+      for (let i = 0; i < body.lists.length; i++) {
+        const list = body.lists[i];
+        if (list.name === this.opts.listName) {
+          this.listId = list.id;
+          return;
+        }
       }
+      await this.createList();
     } catch (e) {
-      try {
-        const request = {
-          method: "POST",
-          url: `/v3/contactdb/lists`,
-          body: {
-            name: this.opts.listName
-          }
-        };
-        await this.client.request(request);
-      } catch (e) {
-        window.console.error(`failed to createList: ${e.response.body.errors}`);
-      }
+      await this.createList();
+    }
+  }
+
+  async createList(): Promise<void> {
+    try {
+      const request = {
+        method: "POST",
+        url: `/v3/contactdb/lists`,
+        body: {
+          name: this.opts.listName
+        }
+      };
+      const [, body] = await this.client.request(request);
+      this.listId = body.id;
+    } catch (e) {
+      throw new Error(`failed to createList: ${e.response.body.errors}`);
     }
   }
 
   async addToList(recipient: Recipient): Promise<void> {
-    // https://sendgrid.com/docs/API_Reference/Web_API_v3/Marketing_Campaigns/contactdb.html#Add-Single-Recipient-POST
-    // https://sendgrid.com/docs/API_Reference/Web_API_v3/Marketing_Campaigns/contactdb.html#Add-a-Single-Recipient-to-a-List-POST
-    window.console.log(recipient);
+    if (!this.listId) {
+      await this.createListIfNotExists();
+    }
+    try {
+      const addRecipientReq = {
+        method: "POST",
+        url: `/v3/contactdb/recipients`,
+        body: [
+          {
+            email: recipient.email,
+            last_name: recipient.lastName,
+            pet: recipient.pet,
+            age: recipient.age
+          }
+        ]
+      };
+      const [, addRecipientReqBody] = await this.client.request(
+        addRecipientReq
+      );
+      const recipientId = addRecipientReqBody.persisted_recipients[0];
 
-    return;
+      const addListReq = {
+        method: "POST",
+        url: `/v3/contactdb/lists/${this.listId}/recipients/${recipientId}`
+      };
+      await this.client.request(addListReq);
+    } catch (e) {
+      throw new Error(`failed to addToList: ${e.response.body.errors}`);
+    }
   }
 
   async send(sendArgs: SendArgs): Promise<string | boolean> {

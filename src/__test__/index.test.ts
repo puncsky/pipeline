@@ -4,6 +4,7 @@ dotenv.config();
 import test from "ava";
 import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
+import { SendgridClient } from "../sendgrid-client";
 
 test.skip("tweet", async t => {
   const twitter = new TwitterClient({
@@ -31,4 +32,14 @@ test.skip("telegram channel", async t => {
     content: "[hello world](https://google.com)"
   });
   t.truthy(url.startsWith("https://t.me/"));
+});
+
+test.skip("sendgrid campaign channel", async t => {
+  const sendgrid = new SendgridClient({
+    sendgridApiKey: String(process.env.SENDGRID_API_KEY),
+    listName: String(process.env.SENDGRID_LIST_NAME)
+  });
+  t.notThrows(async () => {
+    await sendgrid.createListIfNotExists();
+  });
 });

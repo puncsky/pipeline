@@ -106,7 +106,7 @@ export class SendgridClient implements ISender {
           {
             title: sendArgs.title,
             list_ids: [this.listId],
-            //html_content: sendArgs.content,
+            html_content: sendArgs.content,
             plain_content: sendArgs.content
           }
         ]

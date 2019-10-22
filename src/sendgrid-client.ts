@@ -79,10 +79,10 @@ export class SendgridClient implements ISender {
           }
         ]
       };
-      const [, addRecipientReqBody] = await this.client.request(
+      const [, addRecipientResBody] = await this.client.request(
         addRecipientReq
       );
-      const recipientId = addRecipientReqBody.persisted_recipients[0];
+      const recipientId = addRecipientResBody.persisted_recipients[0];
 
       const addListReq = {
         method: "POST",
@@ -95,8 +95,36 @@ export class SendgridClient implements ISender {
   }
 
   async send(sendArgs: SendArgs): Promise<string | boolean> {
-    // https://sendgrid.com/docs/API_Reference/Web_API_v3/Marketing_Campaigns/campaigns.html#Send-a-Campaign-POST
-    window.console.log(sendArgs);
-    return "";
+    if (!this.listId) {
+      await this.createListIfNotExists();
+    }
+    try {
+      const createCampaignReq = {
+        method: "POST",
+        url: `/v3/campaigns`,
+        body: [
+          {
+            title: sendArgs.title,
+            list_ids: [this.listId],
+            //html_content: sendArgs.content,
+            plain_content: sendArgs.content
+          }
+        ]
+      };
+
+      const [, createCampaignResBody] = await this.client.request(
+        createCampaignReq
+      );
+      const id = createCampaignResBody.id;
+
+      const sendReq = {
+        method: "POST",
+        url: `/v3/campaigns/${id}/schedules/now`
+      };
+      const [, sendResBody] = await this.client.request(sendReq);
+      return sendResBody.status;
+    } catch (e) {
+      throw new Error(`failed to send campaign: ${e.response.body.errors}`);
+    }
   }
 }

@@ -6,6 +6,13 @@ import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
 import { SendgridClient } from "../sendgrid-client";
 
+const SENDGRID_OPTS = {
+  sendgridApiKey: String(process.env.SENDGRID_API_KEY),
+  listName: String(process.env.SENDGRID_LIST_NAME),
+  senderId: String(process.env.SENDGRID_SENDER_ID),
+  unsubscribeUrl: String(process.env.SENDGRID_UNSUBSCRIBE_URL)
+};
+
 test.skip("tweet", async t => {
   const twitter = new TwitterClient({
     consumerKey: String(process.env.TWITTER_CONSUMER_KEY),
@@ -35,20 +42,14 @@ test.skip("telegram channel", async t => {
 });
 
 test.skip("sendgrid campaign channel", async t => {
-  const sendgrid = new SendgridClient({
-    sendgridApiKey: String(process.env.SENDGRID_API_KEY),
-    listName: String(process.env.SENDGRID_LIST_NAME)
-  });
+  const sendgrid = new SendgridClient(SENDGRID_OPTS);
   t.notThrows(async () => {
     await sendgrid.createListIfNotExists();
   });
 });
 
 test.skip("sendgrid add to list", async t => {
-  const sendgrid = new SendgridClient({
-    sendgridApiKey: String(process.env.SENDGRID_API_KEY),
-    listName: String(process.env.SENDGRID_LIST_NAME)
-  });
+  const sendgrid = new SendgridClient(SENDGRID_OPTS);
   await sendgrid.addToList({
     email: "test@iotex.io",
     lastName: "iotex_test"
@@ -58,13 +59,14 @@ test.skip("sendgrid add to list", async t => {
 });
 
 test.skip("sendgrid send campaign", async t => {
-  const sendgrid = new SendgridClient({
-    sendgridApiKey: String(process.env.SENDGRID_API_KEY),
-    listName: String(process.env.SENDGRID_LIST_NAME)
+  const sendgrid = new SendgridClient(SENDGRID_OPTS);
+  await sendgrid.addToList({
+    email: "puncsky@gmail.com"
   });
   const status = await sendgrid.send({
     title: "iotex campaign test",
-    content: "[hello world](https://google.com)"
+    content:
+      "[hello world](https://google.com) [unsubscribe](http://luckydraw.vitamart.io/email/unsubscribe)"
   });
 
   t.truthy(status);

@@ -5,13 +5,14 @@ import { ISender, SendArgs } from "./sender";
 type Opts = {
   sendgridApiKey: string;
   listName: string;
+  senderId: string;
+  unsubscribeUrl: string;
 };
 
 type Recipient = {
   email: string;
   lastName?: string;
-  pet?: string;
-  age?: number;
+  firstName?: string;
 };
 
 export class SendgridClient implements ISender {
@@ -58,7 +59,9 @@ export class SendgridClient implements ISender {
       const [, body] = await this.client.request(request);
       this.listId = body.id;
     } catch (e) {
-      throw new Error(`failed to createList: ${e.response.body.errors}`);
+      throw new Error(
+        `failed to createList: ${JSON.stringify(e.response.body.errors)}`
+      );
     }
   }
 
@@ -74,8 +77,7 @@ export class SendgridClient implements ISender {
           {
             email: recipient.email,
             last_name: recipient.lastName,
-            pet: recipient.pet,
-            age: recipient.age
+            first_name: recipient.firstName
           }
         ]
       };
@@ -90,8 +92,19 @@ export class SendgridClient implements ISender {
       };
       await this.client.request(addListReq);
     } catch (e) {
-      throw new Error(`failed to addToList: ${e.response.body.errors}`);
+      throw new Error(
+        `failed to addToList: ${JSON.stringify(e.response.body.errors)}`
+      );
     }
+  }
+
+  // tslint:disable-next-line:no-any
+  async getSenders(): Promise<any> {
+    const [, body] = await this.client.request({
+      method: "GET",
+      url: "/v3/senders"
+    });
+    return body;
   }
 
   async send(sendArgs: SendArgs): Promise<string | boolean> {
@@ -102,16 +115,15 @@ export class SendgridClient implements ISender {
       const createCampaignReq = {
         method: "POST",
         url: `/v3/campaigns`,
-        body: [
-          {
-            title: sendArgs.title,
-            list_ids: [this.listId],
-            html_content: sendArgs.content,
-            plain_content: sendArgs.content
-          }
-        ]
+        body: {
+          title: sendArgs.title,
+          subject: sendArgs.title,
+          sender_id: this.opts.senderId,
+          custom_unsubscribe_url: this.opts.unsubscribeUrl,
+          list_ids: [this.listId],
+          html_content: sendArgs.content
+        }
       };
-
       const [, createCampaignResBody] = await this.client.request(
         createCampaignReq
       );
@@ -124,7 +136,9 @@ export class SendgridClient implements ISender {
       const [, sendResBody] = await this.client.request(sendReq);
       return sendResBody.status;
     } catch (e) {
-      throw new Error(`failed to send campaign: ${e.response.body.errors}`);
+      throw new Error(
+        `failed to send campaign: ${JSON.stringify(e.response.body.errors)}`
+      );
     }
   }
 }

@@ -10,7 +10,8 @@ const SENDGRID_OPTS = {
   sendgridApiKey: String(process.env.SENDGRID_API_KEY),
   listName: String(process.env.SENDGRID_LIST_NAME),
   senderId: String(process.env.SENDGRID_SENDER_ID),
-  unsubscribeUrl: String(process.env.SENDGRID_UNSUBSCRIBE_URL)
+  unsubscribeUrl: String(process.env.SENDGRID_UNSUBSCRIBE_URL),
+  unsubscribeGroup: Number(process.env.SENDGRID_UNSUBSCRIBE_GROUP)
 };
 
 test.skip("tweet", async t => {
@@ -63,11 +64,11 @@ test.skip("sendgrid send campaign", async t => {
   await sendgrid.addToList({
     email: "puncsky@gmail.com"
   });
+  await sendgrid.getUnsubscribeGroups();
   const status = await sendgrid.send({
-    title: "iotex campaign test",
-    content:
-      "[hello world](https://google.com) [unsubscribe](http://luckydraw.vitamart.io/email/unsubscribe)"
+    title: "22 iotex campaign test 2",
+    content: "this is a test"
   });
-
+  console.log(status);
   t.truthy(status);
 });

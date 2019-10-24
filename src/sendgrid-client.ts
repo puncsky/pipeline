@@ -1,12 +1,14 @@
 // @ts-ignore
 import Client from "@sendgrid/client/src/classes/client";
 import { ISender, SendArgs } from "./sender";
+import { getHtml } from "./templates/newsletter";
 
 type Opts = {
   sendgridApiKey: string;
   listName: string;
   senderId: string;
-  unsubscribeUrl: string;
+  unsubscribeUrl?: string;
+  unsubscribeGroup?: number;
 };
 
 type Recipient = {
@@ -107,6 +109,15 @@ export class SendgridClient implements ISender {
     return body;
   }
 
+  // tslint:disable-next-line:no-any
+  async getUnsubscribeGroups(): Promise<any> {
+    const [, body] = await this.client.request({
+      method: "GET",
+      url: "/v3/asm/groups"
+    });
+    return body;
+  }
+
   async send(sendArgs: SendArgs): Promise<string | boolean> {
     if (!this.listId) {
       await this.createListIfNotExists();
@@ -119,9 +130,15 @@ export class SendgridClient implements ISender {
           title: sendArgs.title,
           subject: sendArgs.title,
           sender_id: this.opts.senderId,
-          custom_unsubscribe_url: this.opts.unsubscribeUrl,
+          suppression_group_id: this.opts.unsubscribeGroup,
+          custom_unsubscribe_url: this.opts.unsubscribeGroup
+            ? undefined
+            : this.opts.unsubscribeUrl,
           list_ids: [this.listId],
-          html_content: sendArgs.content
+          html_content: getHtml({
+            unsubscribeUrl: this.opts.unsubscribeUrl,
+            content: sendArgs.content
+          })
         }
       };
       const [, createCampaignResBody] = await this.client.request(

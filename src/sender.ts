@@ -5,6 +5,7 @@ export interface SendArgs {
   forwardedFor?: string;
   imageUrls?: Array<string>;
   short?: string;
+  unsubscribeGroup?: number;
 
   content: string;
 }

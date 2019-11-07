@@ -8,6 +8,7 @@ export interface SendArgs {
   unsubscribeGroup?: number;
 
   content: string;
+  pinImageUrl?: string;
 }
 
 export interface ISender {

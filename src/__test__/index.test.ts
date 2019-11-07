@@ -2,9 +2,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 import test from "ava";
+import { FacebookClient } from "../facebook";
+import { SendgridClient } from "../sendgrid-client";
 import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
-import { SendgridClient } from "../sendgrid-client";
 
 const SENDGRID_OPTS = {
   sendgridApiKey: String(process.env.SENDGRID_API_KEY),
@@ -12,6 +13,11 @@ const SENDGRID_OPTS = {
   senderId: String(process.env.SENDGRID_SENDER_ID),
   unsubscribeUrl: String(process.env.SENDGRID_UNSUBSCRIBE_URL),
   unsubscribeGroup: Number(process.env.SENDGRID_UNSUBSCRIBE_GROUP)
+};
+
+const FACEBOOK_OPTS = {
+  accessToken: String(process.env.FACEBOOK_ACCESS_TOKEN),
+  groupId: "554611227955614"
 };
 
 test.skip("tweet", async t => {
@@ -71,4 +77,13 @@ test.skip("sendgrid send campaign", async t => {
   });
   console.log(status);
   t.truthy(status);
+});
+
+test.skip("facebook send group message", async t => {
+  const facebook = new FacebookClient(FACEBOOK_OPTS);
+
+  const response = await facebook.send({
+    content: "this is a test"
+  });
+  t.truthy(response);
 });

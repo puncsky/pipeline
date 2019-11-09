@@ -2,9 +2,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 import test from "ava";
+import { PinterestClient } from "../pinterest-client";
+import { SendgridClient } from "../sendgrid-client";
 import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
-import { SendgridClient } from "../sendgrid-client";
 
 const SENDGRID_OPTS = {
   sendgridApiKey: String(process.env.SENDGRID_API_KEY),
@@ -71,4 +72,20 @@ test.skip("sendgrid send campaign", async t => {
   });
   console.log(status);
   t.truthy(status);
+});
+
+test.skip("pinterest create a pin", async t => {
+  const pinterest = new PinterestClient({
+    accessToken: String(process.env.PINTEREST_ACCESS_TOKEN),
+    boardName: "test-create-pin-01",
+    // tslint:disable-next-line: no-http-string
+    proxyUrl: "http://127.0.0.1:10887"
+  });
+  const url = await pinterest.send({
+    content: "test creat a pin 01",
+    pinImageUrl:
+      "https://pbs.twimg.com/media/EIzsz8zUYAAeIq9?format=jpg&name=900x900",
+    url: "https://twitter.com/1994Yuangu"
+  });
+  t.truthy(url.startsWith("https://www.pinterest.com/pin"));
 });

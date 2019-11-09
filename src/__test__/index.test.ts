@@ -1,11 +1,12 @@
-import dotenv from "dotenv";
-
-dotenv.config();
 import test from "ava";
+import dotenv from "dotenv";
+import { FacebookClient } from "../facebook";
 import { PinterestClient } from "../pinterest-client";
 import { SendgridClient } from "../sendgrid-client";
 import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
+
+dotenv.config();
 
 const SENDGRID_OPTS = {
   sendgridApiKey: String(process.env.SENDGRID_API_KEY),
@@ -13,6 +14,11 @@ const SENDGRID_OPTS = {
   senderId: String(process.env.SENDGRID_SENDER_ID),
   unsubscribeUrl: String(process.env.SENDGRID_UNSUBSCRIBE_URL),
   unsubscribeGroup: Number(process.env.SENDGRID_UNSUBSCRIBE_GROUP)
+};
+
+const FACEBOOK_OPTS = {
+  accessToken: String(process.env.FACEBOOK_ACCESS_TOKEN),
+  groupId: "554611227955614"
 };
 
 test.skip("tweet", async t => {
@@ -88,4 +94,13 @@ test.skip("pinterest create a pin", async t => {
     url: "https://twitter.com/1994Yuangu"
   });
   t.truthy(url.startsWith("https://www.pinterest.com/pin"));
+});
+
+test.skip("facebook send group message", async t => {
+  const facebook = new FacebookClient(FACEBOOK_OPTS);
+
+  const response = await facebook.send({
+    content: "this is a test"
+  });
+  t.truthy(response);
 });

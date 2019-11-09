@@ -40,6 +40,14 @@ botToken: TODO,
 channelId: TODO
 ```
 
+### Pinterest
+
+Get your access token from [Pinterest Developers](https://developers.pinterest.com/docs/api/overview/)
+
+```text
+access_token: TODO
+```
+
 ## Scripts
 
 To run a single test case, follow instructions [here](https://github.com/avajs/ava/blob/master/docs/01-writing-tests.md#running-specific-tests).

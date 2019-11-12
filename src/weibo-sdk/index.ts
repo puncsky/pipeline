@@ -1,5 +1,5 @@
-import open from "open";
 import https from "https";
+import open from "open";
 import qs from "qs";
 import urlConfig from "./config";
 
@@ -36,12 +36,12 @@ export class Weibo {
 
   constructor(opts: WeiboOpts) {
     this.opts = opts;
-    for (let name in urlConfig) {
+    for (const name in urlConfig) {
       //@ts-ignore
-      let funcBody = urlConfig[name];
+      const funcBody = urlConfig[name];
       //@ts-ignore
       this[name] = {};
-      for (let index in funcBody) {
+      for (const index in funcBody) {
         //@ts-ignore
         this[name][funcBody[index].func] = this._createFunc(funcBody[index]);
       }
@@ -49,12 +49,14 @@ export class Weibo {
   }
 
   getGetParam(paras?: Object) {
-    let commonPath = `?${qs.stringify({
+    const commonPath = `?${qs.stringify({
       client_id: this.opts.appKey,
       redirect_uri: this.opts.redirectUrl,
       client_secret: this.opts.appSecret
     })}`;
-    if (paras) return commonPath + "&" + qs.stringify(paras);
+    if (paras) {
+      return commonPath + "&" + qs.stringify(paras);
+    }
     return commonPath;
   }
 
@@ -68,12 +70,12 @@ export class Weibo {
 
   // authorize to get authorize code
   authorize() {
-    let path = "https://api.weibo.com/oauth2/authorize" + this.getGetParam();
+    const path = "https://api.weibo.com/oauth2/authorize" + this.getGetParam();
     open(path);
   }
 
   _createFunc(urlParas: any) {
-    let _this = this;
+    const _this = this;
     return function(pJson: Object, callback: Function) {
       let options: any = {},
         postData = "";
@@ -102,7 +104,7 @@ export class Weibo {
         });
 
         res.on("end", function() {
-          let buf = Buffer.from(fullData);
+          const buf = Buffer.from(fullData);
           let jsonData = {};
           if (buf) {
             try {

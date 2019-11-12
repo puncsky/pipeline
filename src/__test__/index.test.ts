@@ -57,25 +57,28 @@ test.skip("sendgrid campaign channel", async t => {
 
 test.skip("sendgrid add to list", async t => {
   const sendgrid = new SendgridClient(SENDGRID_OPTS);
-  await sendgrid.addToList({
-    email: "test@iotex.io",
-    lastName: "iotex_test"
-  });
+  await sendgrid.addToList([
+    {
+      email: "test@iotex.io",
+      lastName: "iotex_test"
+    }
+  ]);
 
   t.truthy(sendgrid.listId);
 });
 
 test.skip("sendgrid send campaign", async t => {
   const sendgrid = new SendgridClient(SENDGRID_OPTS);
-  await sendgrid.addToList({
-    email: "puncsky@gmail.com"
-  });
+  await sendgrid.addToList([
+    {
+      email: "puncsky@gmail.com"
+    }
+  ]);
   await sendgrid.getUnsubscribeGroups();
   const status = await sendgrid.send({
     title: "22 iotex campaign test 2",
     content: "this is a test"
   });
-  console.log(status);
   t.truthy(status);
 });
 

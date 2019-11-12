@@ -1,6 +1,6 @@
 import axios from "axios";
-import { ISender, SendArgs } from "./sender";
 import querystring from "querystring";
+import { ISender, SendArgs } from "./sender";
 
 type FacebookOpts = {
   accessToken: string;

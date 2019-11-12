@@ -83,9 +83,10 @@ test.skip("sendgrid send campaign", async t => {
 test.skip("pinterest create a pin", async t => {
   const pinterest = new PinterestClient({
     accessToken: String(process.env.PINTEREST_ACCESS_TOKEN),
-    boardName: "test-create-pin-01",
+    boardName: "test-create-pin-02",
     // tslint:disable-next-line: no-http-string
-    proxyUrl: "http://127.0.0.1:10887"
+    proxyHost: "127.0.0.1",
+    proxyPort: 10887
   });
   const url = await pinterest.send({
     content: "test creat a pin 01",

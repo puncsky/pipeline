@@ -1,5 +1,5 @@
-import { Weibo, WeiboOpts } from "./weibo-sdk/index";
 import { ISender, SendArgs } from "./sender";
+import { Weibo, WeiboOpts } from "./weibo-sdk/index";
 
 export class WeiboClient implements ISender {
   readonly client: Weibo;

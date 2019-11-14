@@ -32,8 +32,8 @@ export class WeiboClient implements ISender {
         return {
           ...config,
           data: querystring.stringify({
-            ...config.data,
-            access_token: opts.accessToken
+            access_token: opts.accessToken,
+            ...config.data
           })
         };
       }
@@ -64,7 +64,7 @@ export class WeiboClient implements ISender {
       const {
         data: { expire_in }
       } = await this.axiosInstance.post("/oauth2/get_token_info");
-      return expire_in >= 60;
+      return expire_in >= 60; // seconds
     } catch (error) {
       console.warn(`failed to validate access_token: [${error}].`);
       return false;
@@ -74,7 +74,7 @@ export class WeiboClient implements ISender {
   authorize = async () => {
     const { appKey, redirectUrl } = this.opts;
     const path = `https://api.weibo.com/oauth2/authorize?client_id=${appKey}&redirect_uri=${redirectUrl}`;
-    await open(path, { wait: true });
+    await open(path);
     return true;
   };
 
@@ -91,7 +91,7 @@ export class WeiboClient implements ISender {
         client_secret: appSecret
       });
       console.warn(
-        `the new access_token is: [${access_token}], please update .env file`
+        `The new access_token is: [${access_token}], please update the WEIBO_ACCESS_TOKEN field in the .env file and update WEIBO_AUTHORIZATION_EXPIRED to false.`
       );
       return access_token;
     } catch (error) {
@@ -99,30 +99,41 @@ export class WeiboClient implements ISender {
     }
   };
 
-  share = async (sendArgs: SendArgs) => {
-    const { url, content } = sendArgs;
+  share = async (sendArgs: SendArgs, accessToken: string) => {
+    const { url = "", content } = sendArgs;
     try {
       const response = await this.axiosInstance.post("/statuses/share.json", {
-        status: encodeURI(`${url}?query=${content}`)
+        status: `${content}${encodeURI(url)}`,
+        access_token: accessToken
       });
       const {
-        data: { id }
+        data: {
+          user: { idstr }
+        }
       } = response;
-      return id;
+      // share link address
+      return `https://weibo.com/${idstr}/profile`;
     } catch (error) {
       throw new Error(`failed to share: [${error}].`);
     }
   };
 
-  send(sendArgs: SendArgs): Promise<string | boolean> {
-    // 1. 判断 access_token 有效性
-    // 2. 有效，直接发送
-    // 3. 无效，打开浏览器窗口；并提示用户更新 AUTHORIZATION_CODE 和 AUTHORIZATION_EXPIRED=true 后重试
-    // 4. 重试流程：
-    // 4.1 判断 access_token 是否有效，必然会无效
-    // 4.2 无效后，判断 expired === true
-    // 4.3 使用新的 authorizationCode 获取新的 access_token 并打印出来，并提示更新到 .env 文件中，同时更新 AUTHORIZATION_EXPIRED=false
-    console.log(sendArgs);
-    throw new Error("Method not implemented.");
-  }
+  send = async (sendArgs: SendArgs): Promise<string | boolean> => {
+    const isValid = await this.validateAccessToken();
+    if (isValid) {
+      return this.share(sendArgs, this.opts.accessToken);
+    } else {
+      const { authorizationExpired } = this.opts;
+      if (!authorizationExpired) {
+        this.authorize();
+        console.warn(
+          "The program will open the browser, please log in to Weibo and copy the code parameter in the redirected address, then update the WEIBO_AUTHORIZATION_CODE field in the .env file and update WEIBO_AUTHORIZATION_EXPIRED to true. Then please try again."
+        );
+        return false;
+      } else {
+        const newAccessToken = await this.getAccessToken();
+        return this.share(sendArgs, newAccessToken);
+      }
+    }
+  };
 }

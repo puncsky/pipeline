@@ -27,7 +27,9 @@ const WEIBO_OPTS = {
   appSecret: String(process.env.WEIBO_APP_SECRET),
   redirectUrl: String(process.env.WEIBO_REDIRECT_URL),
   authorizationCode: String(process.env.WEIBO_AUTHORIZATION_CODE),
-  authorizationExpired: Boolean(process.env.WEIBO_AUTHORIZATION_EXPIRED),
+  authorizationExpired: Boolean(
+    String(process.env.WEIBO_AUTHORIZATION_EXPIRED) === "true"
+  ),
   accessToken: String(process.env.WEIBO_ACCESS_TOKEN)
 };
 
@@ -137,11 +139,25 @@ test.skip("get access_token", async t => {
   t.truthy(response);
 });
 
-test("share to weibo", async t => {
+test.skip("share to weibo", async t => {
   const weibo = new WeiboClient(WEIBO_OPTS);
-  const response = await weibo.share({
+  const response = await weibo.share(
+    {
+      // tslint:disable-next-line: no-http-string
+      url: "http://www.github.com",
+      content: "测试分享内容2"
+    },
+    WEIBO_OPTS.accessToken
+  );
+  t.truthy(response);
+});
+
+test.skip("send to weibo", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.send({
+    // tslint:disable-next-line: no-http-string
     url: "http://www.github.com",
-    content: "测试"
+    content: "测试发送内容3"
   });
   t.truthy(response);
 });

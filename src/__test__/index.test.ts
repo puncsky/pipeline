@@ -2,9 +2,11 @@ import dotenv from "dotenv";
 
 dotenv.config();
 import test from "ava";
+import { FacebookClient } from "../facebook";
+import { SendgridClient } from "../sendgrid-client";
 import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
-import { SendgridClient } from "../sendgrid-client";
+import { WeiboClient } from "../weibo";
 
 const SENDGRID_OPTS = {
   sendgridApiKey: String(process.env.SENDGRID_API_KEY),
@@ -12,6 +14,20 @@ const SENDGRID_OPTS = {
   senderId: String(process.env.SENDGRID_SENDER_ID),
   unsubscribeUrl: String(process.env.SENDGRID_UNSUBSCRIBE_URL),
   unsubscribeGroup: Number(process.env.SENDGRID_UNSUBSCRIBE_GROUP)
+};
+
+const FACEBOOK_OPTS = {
+  accessToken: String(process.env.FACEBOOK_ACCESS_TOKEN),
+  groupId: "554611227955614"
+};
+
+const WEIBO_OPTS = {
+  appKey: String(process.env.WEIBO_APP_KEY),
+  appSecret: String(process.env.WEIBO_APP_SECRET),
+  redirectUrl: String(process.env.WEIBO_REDIRECT_URL),
+  authorizationCode: String(process.env.WEIBO_AUTHORIZATION_CODE),
+  authorizationExpired: Boolean(process.env.WEIBO_AUTHORIZATION_EXPIRED),
+  accessToken: String(process.env.WEIBO_ACCESS_TOKEN)
 };
 
 test.skip("tweet", async t => {
@@ -51,24 +67,63 @@ test.skip("sendgrid campaign channel", async t => {
 
 test.skip("sendgrid add to list", async t => {
   const sendgrid = new SendgridClient(SENDGRID_OPTS);
-  await sendgrid.addToList({
-    email: "test@iotex.io",
-    lastName: "iotex_test"
-  });
+  await sendgrid.addToList([
+    {
+      email: "test@iotex.io",
+      lastName: "iotex_test"
+    }
+  ]);
 
   t.truthy(sendgrid.listId);
 });
 
 test.skip("sendgrid send campaign", async t => {
   const sendgrid = new SendgridClient(SENDGRID_OPTS);
-  await sendgrid.addToList({
-    email: "puncsky@gmail.com"
-  });
+  await sendgrid.addToList([
+    {
+      email: "puncsky@gmail.com"
+    }
+  ]);
   await sendgrid.getUnsubscribeGroups();
   const status = await sendgrid.send({
     title: "22 iotex campaign test 2",
     content: "this is a test"
   });
-  console.log(status);
   t.truthy(status);
+});
+
+test.skip("facebook send group message", async t => {
+  const facebook = new FacebookClient(FACEBOOK_OPTS);
+
+  const response = await facebook.send({
+    content: "this is a test"
+  });
+  t.truthy(response);
+});
+
+test.skip("validate weibo access_token", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.validateAccessToken();
+  t.truthy(typeof response);
+});
+
+test.skip("open weibo authorize window", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.authorize();
+  t.truthy(typeof response);
+});
+
+test.skip("get access_token", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.getAccessToken();
+  t.truthy(response);
+});
+
+test("share to weibo", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.share({
+    url: "http://www.github.com",
+    content: "测试"
+  });
+  t.truthy(response);
 });

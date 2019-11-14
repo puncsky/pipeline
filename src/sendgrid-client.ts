@@ -67,30 +67,47 @@ export class SendgridClient implements ISender {
     }
   }
 
-  async addToList(recipient: Recipient): Promise<void> {
+  async addToList(recipients: Array<Recipient>): Promise<void> {
     if (!this.listId) {
       await this.createListIfNotExists();
     }
     try {
-      const addRecipientReq = {
-        method: "POST",
-        url: `/v3/contactdb/recipients`,
-        body: [
-          {
-            email: recipient.email,
-            last_name: recipient.lastName,
-            first_name: recipient.firstName
-          }
-        ]
-      };
-      const [, addRecipientResBody] = await this.client.request(
-        addRecipientReq
-      );
-      const recipientId = addRecipientResBody.persisted_recipients[0];
-
+      const reqRecipients = recipients.map(recipient => ({
+        email: recipient.email,
+        last_name: recipient.lastName,
+        first_name: recipient.firstName
+      }));
+      let resRecipients: Array<string> = [];
+      do {
+        /*
+        Important note:
+        1. limit 1000 recipients per request
+        2. max 3 requests per 2 seconds
+        ref. https://sendgrid.api-docs.io/v3.0/contacts-api-recipients/add-recipients
+        */
+        const startMs = Date.now();
+        const addRecipientReq = {
+          method: "POST",
+          url: `/v3/contactdb/recipients`,
+          body: reqRecipients.splice(0, 1000)
+        };
+        const [, addRecipientResBody] = await this.client.request(
+          addRecipientReq
+        );
+        resRecipients = [
+          ...resRecipients,
+          ...addRecipientResBody.persisted_recipients
+        ];
+        const delay = Math.max(2000 / 3 - (Date.now() - startMs), 0);
+        if (delay) {
+          // tslint:disable-next-line: no-string-based-set-timeout
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      } while (reqRecipients.length > 0);
       const addListReq = {
         method: "POST",
-        url: `/v3/contactdb/lists/${this.listId}/recipients/${recipientId}`
+        url: `/v3/contactdb/lists/${this.listId}/recipients`,
+        body: resRecipients
       };
       await this.client.request(addListReq);
     } catch (e) {

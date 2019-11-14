@@ -1,6 +1,6 @@
 import test from "ava";
 import { Weibo } from "../weibo-sdk/index";
-import { WeiboClient } from "../weibo";
+import { WeiboClient } from "../weibo_client";
 
 // my test appkey
 const cfg = {

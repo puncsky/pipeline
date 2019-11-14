@@ -5,6 +5,7 @@ import { PinterestClient } from "../pinterest-client";
 import { SendgridClient } from "../sendgrid-client";
 import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
+import { WeiboClient } from "../weibo";
 
 dotenv.config();
 
@@ -19,6 +20,15 @@ const SENDGRID_OPTS = {
 const FACEBOOK_OPTS = {
   accessToken: String(process.env.FACEBOOK_ACCESS_TOKEN),
   groupId: "554611227955614"
+};
+
+const WEIBO_OPTS = {
+  appKey: String(process.env.WEIBO_APP_KEY),
+  appSecret: String(process.env.WEIBO_APP_SECRET),
+  redirectUrl: String(process.env.WEIBO_REDIRECT_URL),
+  authorizationCode: String(process.env.WEIBO_AUTHORIZATION_CODE),
+  authorizationExpired: Boolean(process.env.WEIBO_AUTHORIZATION_EXPIRED),
+  accessToken: String(process.env.WEIBO_ACCESS_TOKEN)
 };
 
 test.skip("tweet", async t => {
@@ -105,6 +115,33 @@ test.skip("facebook send group message", async t => {
 
   const response = await facebook.send({
     content: "this is a test"
+  });
+  t.truthy(response);
+});
+
+test.skip("validate weibo access_token", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.validateAccessToken();
+  t.truthy(typeof response);
+});
+
+test.skip("open weibo authorize window", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.authorize();
+  t.truthy(typeof response);
+});
+
+test.skip("get access_token", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.getAccessToken();
+  t.truthy(response);
+});
+
+test("share to weibo", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.share({
+    url: "http://www.github.com",
+    content: "测试"
   });
   t.truthy(response);
 });

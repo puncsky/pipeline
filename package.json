@@ -106,6 +106,9 @@
     "open": "6.4.0",
     "telegraf": "3.32.0",
     "tunnel": "0.0.6",
-    "twitter": "1.7.1"
+    "twitter": "1.7.1",
+    "canvas": "^2.6.0",
+    "concat-stream": "^2.0.0",
+    "form-data": "^3.0.0"
   }
 }

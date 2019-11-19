@@ -9,6 +9,7 @@ export interface SendArgs {
 
   content: string;
   pinImageUrl?: string;
+  generateTextImage?: boolean;
 }
 
 export interface ISender {

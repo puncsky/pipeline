@@ -2,7 +2,7 @@ const concat = require("concat-stream");
 const fd = new FormData();
 
 fd.append("hello", "world");
-fd.append("file", fs.createReadStream(file));
+fd.append("file", new Blob(["test payload"], { type: "text/csv" }));
 fd.pipe(
   concat(data => {
     axios.post("/hello", data, {

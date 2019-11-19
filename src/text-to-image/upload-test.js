@@ -24,8 +24,8 @@ const share = async (data, config) => {
     // share link address
     return `https://weibo.com/${idstr}/profile`;
   } catch (error) {
-    console.log("error 01", error);
-    throw new Error(`failed to share: [${error}].`);
+    console.log(JSON.stringify(error));
+    throw new Error(`failed to share.`);
   }
 };
 

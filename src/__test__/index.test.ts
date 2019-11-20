@@ -9,6 +9,8 @@ import { WeiboClient } from "../weibo";
 
 dotenv.config();
 
+dotenv.config();
+
 const SENDGRID_OPTS = {
   sendgridApiKey: String(process.env.SENDGRID_API_KEY),
   listName: String(process.env.SENDGRID_LIST_NAME),

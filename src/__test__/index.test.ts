@@ -1,11 +1,13 @@
-import dotenv from "dotenv";
-
-dotenv.config();
 import test from "ava";
+import dotenv from "dotenv";
 import { FacebookClient } from "../facebook";
+import { PinterestClient } from "../pinterest-client";
 import { SendgridClient } from "../sendgrid-client";
 import { TelegramClient } from "../telegram";
 import { TwitterClient } from "../twitter";
+import { WeiboClient } from "../weibo";
+
+dotenv.config();
 
 const SENDGRID_OPTS = {
   sendgridApiKey: String(process.env.SENDGRID_API_KEY),
@@ -18,6 +20,17 @@ const SENDGRID_OPTS = {
 const FACEBOOK_OPTS = {
   accessToken: String(process.env.FACEBOOK_ACCESS_TOKEN),
   groupId: "554611227955614"
+};
+
+const WEIBO_OPTS = {
+  appKey: String(process.env.WEIBO_APP_KEY),
+  appSecret: String(process.env.WEIBO_APP_SECRET),
+  redirectUrl: String(process.env.WEIBO_REDIRECT_URL),
+  authorizationCode: String(process.env.WEIBO_AUTHORIZATION_CODE),
+  authorizationExpired: Boolean(
+    String(process.env.WEIBO_AUTHORIZATION_EXPIRED) === "true"
+  ),
+  accessToken: String(process.env.WEIBO_ACCESS_TOKEN)
 };
 
 test.skip("tweet", async t => {
@@ -82,11 +95,69 @@ test.skip("sendgrid send campaign", async t => {
   t.truthy(status);
 });
 
+test.skip("pinterest create a pin", async t => {
+  const pinterest = new PinterestClient({
+    accessToken: String(process.env.PINTEREST_ACCESS_TOKEN),
+    boardName: "test-create-pin-02",
+    // tslint:disable-next-line: no-http-string
+    proxyHost: "127.0.0.1",
+    proxyPort: 10887
+  });
+  const url = await pinterest.send({
+    content: "test creat a pin 01",
+    pinImageUrl:
+      "https://pbs.twimg.com/media/EIzsz8zUYAAeIq9?format=jpg&name=900x900",
+    url: "https://twitter.com/1994Yuangu"
+  });
+  t.truthy(url.startsWith("https://www.pinterest.com/pin"));
+});
+
 test.skip("facebook send group message", async t => {
   const facebook = new FacebookClient(FACEBOOK_OPTS);
 
   const response = await facebook.send({
     content: "this is a test"
+  });
+  t.truthy(response);
+});
+
+test.skip("validate weibo access_token", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.validateAccessToken();
+  t.truthy(typeof response);
+});
+
+test.skip("open weibo authorize window", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.authorize();
+  t.truthy(typeof response);
+});
+
+test.skip("get access_token", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.getAccessToken();
+  t.truthy(response);
+});
+
+test.skip("share to weibo", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.share(
+    {
+      // tslint:disable-next-line: no-http-string
+      url: "http://www.github.com",
+      content: "测试分享内容2"
+    },
+    WEIBO_OPTS.accessToken
+  );
+  t.truthy(response);
+});
+
+test.skip("send to weibo", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.send({
+    // tslint:disable-next-line: no-http-string
+    url: "http://www.github.com",
+    content: "测试发送内容3"
   });
   t.truthy(response);
 });

@@ -2,6 +2,7 @@ import { AxiosInstance, default as axios } from "axios";
 import open from "open";
 import querystring from "querystring";
 import { ISender, SendArgs } from "./sender";
+import { generateImageAndSend } from "./text-to-image/generate";
 
 type WeiboOpts = {
   appKey: string;
@@ -100,12 +101,27 @@ export class WeiboClient implements ISender {
   };
 
   share = async (sendArgs: SendArgs, accessToken: string) => {
-    const { url = "", content } = sendArgs;
+    const { url = "", content, generateTextImage } = sendArgs;
     try {
-      const response = await this.axiosInstance.post("/statuses/share.json", {
+      let response;
+      const formData = {
         status: `${content}${encodeURI(url)}`,
         access_token: accessToken
-      });
+      };
+      if (generateTextImage) {
+        const opts = {
+          formData,
+          imageFieldKey: "pic",
+          imageText: content,
+          uploadUrl: "https://api.weibo.com/statuses/share.json"
+        };
+        response = await generateImageAndSend(opts);
+      } else {
+        response = await this.axiosInstance.post(
+          "/statuses/share.json",
+          formData
+        );
+      }
       const {
         data: {
           user: { idstr }

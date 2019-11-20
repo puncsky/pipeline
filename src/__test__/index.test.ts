@@ -9,8 +9,6 @@ import { WeiboClient } from "../weibo";
 
 dotenv.config();
 
-dotenv.config();
-
 const SENDGRID_OPTS = {
   sendgridApiKey: String(process.env.SENDGRID_API_KEY),
   listName: String(process.env.SENDGRID_LIST_NAME),
@@ -161,5 +159,18 @@ test.skip("send to weibo", async t => {
     url: "http://www.github.com",
     content: "测试发送内容3"
   });
+  t.truthy(response);
+});
+
+test.skip("send to weibo with textImage", async t => {
+  const weibo = new WeiboClient(WEIBO_OPTS);
+  const response = await weibo.send({
+    // tslint:disable-next-line: no-http-string
+    url: "http://www.github.com",
+    content:
+      "I believe that telling our 中文文本 stories, first to ourselves and then to one another and the world, is a revolutionary act. 中文文本，不以空格分隔，不足一行直接结束，否则换行。",
+    generateTextImage: true
+  });
+  console.log(response);
   t.truthy(response);
 });

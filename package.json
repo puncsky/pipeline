@@ -71,7 +71,7 @@
     "@types/dotenv": "6.1.1",
     "@types/node": "11.13.22",
     "@types/open": "6.2.1",
-    "ava": "1.4.1",
+    "ava": "2.4.0",
     "babel-loader": "8.0.6",
     "babel-plugin-module-resolver": "3.2.0",
     "babel-plugin-react-require": "3.1.1",

@@ -93,7 +93,6 @@
     "node": "10.17.0",
     "npm": "6.13.1"
   },
-  "private": true,
   "dependencies": {
     "@sendgrid/client": "6.4.0",
     "@sendgrid/mail": "6.4.0",

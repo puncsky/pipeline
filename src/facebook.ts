@@ -25,7 +25,6 @@ export class FacebookClient implements ISender {
         headers: [{ "Content-Type": "application/x-www-form-urlencoded" }]
       }
     );
-    console.log(response);
     return response.data;
   }
 }

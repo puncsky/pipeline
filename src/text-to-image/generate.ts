@@ -108,7 +108,8 @@ const generateImageAndSend = async (opts: GenerateOpts): Promise<any> => {
         reject(error);
       }
       let str = "";
-      res.on("data", chunk => {
+      // tslint:disable-next-line:no-any
+      res.on("data", (chunk: any) => {
         str += chunk;
       });
       res.on("end", () => {

@@ -24,6 +24,6 @@ export class TwitterClient implements ISender {
     const title = args.title ? `【${args.title}】` : "";
     const status = title + args.content + args.url;
     const resp = await this.client.post("statuses/update", { status });
-    return `https://twitter.com/guigu_io/status/${resp.id}`;
+    return `https://twitter.com/guigu_io/status/${resp.id_str}`;
   }
 }

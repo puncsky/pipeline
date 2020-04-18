@@ -1,7 +1,7 @@
 {
   "name": "@puncsky/pipeline",
   "license": "MIT",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "publishing posts to social networks and chatbots",
   "main": "index.ts",
   "files": [

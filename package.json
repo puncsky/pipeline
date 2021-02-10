@@ -94,7 +94,7 @@
     "npm": "6.13.1"
   },
   "dependencies": {
-    "@sendgrid/client": "6.4.0",
+    "@sendgrid/client": "6.5.5",
     "@sendgrid/mail": "6.4.0",
     "@types/concat-stream": "1.6.0",
     "@types/tunnel": "0.0.1",

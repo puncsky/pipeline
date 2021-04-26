@@ -95,7 +95,7 @@
   },
   "dependencies": {
     "@sendgrid/client": "6.4.0",
-    "@sendgrid/mail": "6.4.0",
+    "@sendgrid/mail": "6.5.5",
     "@types/concat-stream": "1.6.0",
     "@types/tunnel": "0.0.1",
     "@types/twitter": "1.7.0",

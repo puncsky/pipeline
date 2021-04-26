@@ -90,7 +90,7 @@
     "typescript": "3.6.3"
   },
   "engines": {
-    "node": "10.17.0",
+    "node": "10.24.1",
     "npm": "6.13.1"
   },
   "dependencies": {

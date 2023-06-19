@@ -107,7 +107,7 @@
     "nodemailer": "6.3.0",
     "nodemailer-mailgun-transport": "1.4.0",
     "open": "6.4.0",
-    "telegraf": "3.32.0",
+    "telegraf": "3.40.0",
     "tunnel": "0.0.6",
     "twitter": "1.7.1"
   }
